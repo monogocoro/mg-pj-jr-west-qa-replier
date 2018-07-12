@@ -1,4 +1,4 @@
-// 'use strict';
+'use strict';
 //
 // var loopback = require('loopback');
 // var boot = require('loopback-boot');
@@ -27,9 +27,19 @@
 //   if (require.main === module)
 //     app.start();
 // });
-const express = require('express')
-const app = express()
 
-app.get('/', (req, res) => res.send('Hello World!'))
+var WebSocketServer = require('ws').Server;
+var wss = new WebSocketServer({'port': 12002});
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'))
+var connections = [];
+wss.on('connection', function(ws) {
+  console.log('success');
+  ws.on('message', function(json) {
+    console.log('I AM SERVER.JS LOL:' + json);
+    ws.send('Thank you.');
+  });
+});
+
+exports.closeServer = function() {
+  wss.close();
+};
