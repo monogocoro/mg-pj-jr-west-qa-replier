@@ -1,44 +1,35 @@
 'use strict';
-//
-// var loopback = require('loopback');
-// var boot = require('loopback-boot');
-//
-// var app = module.exports = loopback();
-//
-// app.start = function() {
-//   // start the web server
-//   return app.listen(function() {
-//     app.emit('started');
-//     var baseUrl = app.get('url').replace(/\/$/, '');
-//     console.log('Web server listening at: %s', baseUrl);
-//     if (app.get('loopback-component-explorer')) {
-//       var explorerPath = app.get('loopback-component-explorer').mountPath;
-//       console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
-//     }
-//   });
-// };
-//
-// // Bootstrap the application, configure models, datasources and middleware.
-// // Sub-apps like REST API are mounted via boot scripts.
-// boot(app, __dirname, function(err) {
-//   if (err) throw err;
-//
-//   // start the server if `$ node server.js`
-//   if (require.main === module)
-//     app.start();
-// });
+var loopback = require('loopback');
+var boot = require('loopback-boot');
+var app = module.exports = loopback();
+
+// Bootstrap the application, configure models, datasources and middleware.
+// Sub-apps like REST API are mounted via boot scripts.
+boot(app, __dirname, function(err) {
+  if (err) throw err;
+});
 
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({'port': 12002});
+var Reply = app.models.reply;
+
 
 var connections = [];
 wss.on('connection', function(ws) {
   console.log('connected');
-  ws.on('message', function(json) {
-    ws.send('server received test send.');
+  ws.on('message', function(text) {
+
+    var reply = new Reply({input: text});
+    reply.isValid(function (valid) {
+      var result = JSON.parse(JSON.stringify(reply));
+      if (!valid) {
+        result["errors"] = JSON.parse(JSON.stringify(reply.errors));
+      }
+      ws.send(JSON.stringify(result));
+    });
   });
 });
 
-exports.closeServer = function() {
+module.exports.closeServer = function() {
   wss.close();
 };

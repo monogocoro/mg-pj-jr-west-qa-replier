@@ -28,15 +28,8 @@ it('"き" -> エラーを返却する', function(done) {
   });
   ws.on('message', function incoming(data) {
     console.log('test received: ' + data);
-    var json = {
-      api: 'reply',
-      content: null,
-      errors: {
-        base: ['error'],
-      },
-    };
     try {
-      assert.equal(data, JSON.stringify(json));
+      assert.equal(data, '{"input":"き","errors":{"input":["is not included in the list"]}}');
     }
     finally {
       server.closeServer();
