@@ -33,10 +33,9 @@ var wss = new WebSocketServer({'port': 12002});
 
 var connections = [];
 wss.on('connection', function(ws) {
-  console.log('success');
+  console.log('connected');
   ws.on('message', function(json) {
-    console.log('I AM SERVER.JS LOL:' + json);
-    ws.send('Thank you.');
+    ws.send('server received test send.');
   });
 });
 
