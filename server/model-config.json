@@ -41,5 +41,13 @@
   "reply": {
     "dataSource": null,
     "public": true
+  },
+  "suggestion": {
+    "dataSource": "db",
+    "public": false
+  },
+  "route": {
+    "dataSource": null,
+    "public": false
   }
 }
