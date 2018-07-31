@@ -27,7 +27,10 @@ ws.on('open', function open() {
   console.log('opened!');
 });
 
-ws.on('message', function incoming(text) {
+ws.on('message', function incoming(json) {
+  console.log(json);
+  var jsonObj = JSON.parse(json);
+  var text = jsonObj['param']['text']
   var reply = new Reply({input: text});
 
   reply.isValid(function (valid) {
