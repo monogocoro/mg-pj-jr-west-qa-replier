@@ -6,10 +6,14 @@
     "validateUpsert": true
   },
   "properties": {
-    "content": {
+    "param": {
       "type": "object"
     },
     "input": {
+      "type": "string",
+      "required": true
+    },
+    "api": {
       "type": "string",
       "required": true
     }
