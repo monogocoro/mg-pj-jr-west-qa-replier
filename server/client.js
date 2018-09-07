@@ -24,7 +24,7 @@ routes.push(new Route({key: '大阪駅', value: '大阪駅への行き方の結�
 routes.push(new Route({key: 'ATM', value: 'ATMの場所情報の結果'}));
 
 var route = new Route();
-var result = route.interpret('金閣寺に行きたいんだけど');
+var result = route.interpret('金閣寺に行きたい');
 
 console.log(result);
 
@@ -39,8 +39,6 @@ reply.isValid(function (valid) {
 
 var json = '{"param":{"errors":{"input":["is not included in the list"]}},"input":"aa","api":"replyData"}'
 var result = JSON.parse(json);
-
-console.log(result);
 
 ws.on('open', function open() {
   console.log('opened!');
