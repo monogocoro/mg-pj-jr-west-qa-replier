@@ -918,10 +918,10 @@ var scoderules = [
      ptn: {querySDB: {place: '京都', location: '$1'}}},
 
     {rule: [isTDBN],
-     ptn: {queryTDB: {frome: '京都', to: '$1'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1'}}},
 
     {rule: ["go", "to", isN],
-     ptn: {queryTDB: {frome: '京都', to: '$1'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1'}}},
 ];
 
 
@@ -1173,7 +1173,7 @@ function replaceTeisei(s){
 
 module.exports = function(line){
   var interpreter_result = interpreter(line);
-  return JSON.parse(result);
+  return JSON.parse(interpreter_result);
 }
 
 // ----------
