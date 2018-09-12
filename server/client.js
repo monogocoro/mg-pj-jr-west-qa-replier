@@ -3,7 +3,8 @@ var loopback = require('loopback');
 var boot = require('loopback-boot');
 var app = module.exports = loopback();
 const WebSocket = require('ws');
-var ws = new WebSocket('ws://202.229.59.135:9000');
+// var ws = new WebSocket('ws://202.229.59.135:9000');
+var ws = new WebSocket('ws://192.168.5.135:9000');
 
 boot(app, __dirname, function(err) {
   if (err) throw err;

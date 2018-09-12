@@ -706,7 +706,7 @@ function getjword(s){
 
 // デフォルトjcode
 // 解析できない文が来た場合、統合部に返すJCODE
-//var jcode = {TDBquery: {from: '京都', to: 'unknown'}};
+//var jcode = {queryTDB: {from: '京都', to: 'unknown'}};
 var dbtype = "unknown";
 
 //ルール内に使用する関数シンボルを定義する。
@@ -831,97 +831,97 @@ var scoderules = [
     // JSONパターンに含まれる$で始まる名前はargsの順番に適用される。
 
     {rule: ["number", "noriba", isTDBN],
-     ptn: {TDBquery: {place: '京都', train: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {place: '京都', train: '$1', bansen: 'what'}}},
 
     {rule: [isNumber, "noriba"],
-     ptn: {SDBquery: {place: '京都', bansen: '$1'}}},
+     ptn: {querySDB: {place: '京都', bansen: '$1'}}},
 
     {rule: ["noriba", isNumber],
-     ptn: {SDBquery: {place: '京都', bansen: '$1'}}},
+     ptn: {querySDB: {place: '京都', bansen: '$1'}}},
 
     {rule: ["noriba", "of", isSDBN],
-     ptn: {SDBquery: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: '京都', location: '$1'}}},
 
     {rule: [isSDBN, "noriba"],
-     ptn: {SDBquery: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: '京都', location: '$1'}}},
 
     {rule: ["to", isTDBN, "noriba"],
-     ptn: {TDBquery: {from: '京都', to: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1', bansen: 'what'}}},
 
     {rule: ["チケット売り場", isSDBN],
-     ptn: {SDBquery: {location: '京都', place:'チケット売り場', kind: '$1'}}},
+     ptn: {querySDB: {location: '京都', place:'チケット売り場', kind: '$1'}}},
 
     {rule: [isLine, "noriba"],
-     ptn: {TDBquery: {place: '京都', line: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {place: '京都', line: '$1', bansen: 'what'}}},
 
     {rule: [isSTrain, "noriba"],
-     ptn: {TDBquery: {place: '京都', train: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {place: '京都', train: '$1', bansen: 'what'}}},
 
     {rule: ["noriba", "of", isLine],
-     ptn: {TDBquery: {place: '京都', line: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {place: '京都', line: '$1', bansen: 'what'}}},
 
     {rule: ["noriba", "of", isSTrain],
-     ptn: {TDBquery: {place: '京都', train: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {place: '京都', train: '$1', bansen: 'what'}}},
 
     {rule: ["始発", "to", isTDBN],
-     ptn: {TDBquery: {from: '京都', to: '$1', period: '始発'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1', period: '始発'}}},
 
     {rule: ["how", "long", isTDBN],
-     ptn: {TDBquery: {from: '京都', to: '$1', total_time: 'what'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1', total_time: 'what'}}},
 
     {rule: ["how", "long", isSDBN], //関空[SDB]のケース
-     ptn: {TDBquery: {from: '京都', to: '$1', total_time: 'what'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1', total_time: 'what'}}},
 
     {rule: ["time", "to", isTDBN],
-     ptn: {TDBquery: {from: '京都', to: '$1', total_time: 'what'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1', total_time: 'what'}}},
 
     {rule: ["how", "much", "time", isTDBN],
-     ptn: {TDBquery: {from: '京都', to: '$1', total_time: 'what'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1', total_time: 'what'}}},
 
     {rule: ["fare", "to", isTDBN],
-     ptn: {TDBquery: {from: '京都', to: '$1', fare: 'what'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1', fare: 'what'}}},
 
     {rule: ["charge", "to", isTDBN],
-     ptn: {TDBquery: {from: '京都', to: '$1', fare: 'what'}}},
+     ptn: {queryTDB: {from: '京都', to: '$1', fare: 'what'}}},
 
     {rule: ["バス", "to", isSDBN],
-     ptn: {SDBquery: {place: '京都', location: 'バス', to: '$1'}}},
+     ptn: {querySDB: {place: '京都', location: 'バス', to: '$1'}}},
 
     {rule: ["バス", "to", isTDBN],
-     ptn: {SDBquery: {from: '京都', to: '$1', route: 'バス'}}},
+     ptn: {querySDB: {from: '京都', to: '$1', route: 'バス'}}},
 
     {rule: [isExchange, "money"],
-     ptn: {SDBquery: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: '京都', location: '$1'}}},
 
     {rule: [isATM, "money"],
-     ptn: {SDBquery: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: '京都', location: '$1'}}},
 
     {rule: [isSell, "beer"], // 後で修正
-     ptn: {SDBquery: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: '京都', location: '$1'}}},
 
     {rule: [isSell, "cigarette"], //後で修正
-     ptn: {SDBquery: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: '京都', location: '$1'}}},
 
     {rule: [isSell, "coffee"], //後で修正
-     ptn: {SDBquery: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: '京都', location: '$1'}}},
 
     {rule: ["buy", "souvenir"], //後で修正
-     ptn: {SDBquery: {place: '京都', location: 'お土産屋'}}},
+     ptn: {querySDB: {place: '京都', location: 'お土産屋'}}},
 
     {rule: ["leave", "something"], //後で修正
-     ptn: {SDBquery: {place: '京都', location: '京都忘れ物センター'}}},
+     ptn: {querySDB: {place: '京都', location: '京都忘れ物センター'}}},
 
     {rule: ["saten"], //後で修正
-     ptn: {SDBquery: {place: '京都', location: '喫茶店'}}},
+     ptn: {querySDB: {place: '京都', location: '喫茶店'}}},
 
     {rule: [isSDBN],
-     ptn: {SDBquery: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: '京都', location: '$1'}}},
 
     {rule: [isTDBN],
-     ptn: {TDBquery: {frome: '京都', to: '$1'}}},
+     ptn: {queryTDB: {frome: '京都', to: '$1'}}},
 
     {rule: ["go", "to", isN],
-     ptn: {TDBquery: {frome: '京都', to: '$1'}}},
+     ptn: {queryTDB: {frome: '京都', to: '$1'}}},
 ];
 
 
@@ -929,7 +929,7 @@ function generateJcode(){
     console.log("--jcode---");
     // interprete scode then generate jcode
 
-    var jcode = {JDBquery: "fail"}
+    var jcode = {queryJDB: "fail"}
     var ri = 0;
     scode = flatten(scode);
     var rule, pattern;
@@ -1172,7 +1172,8 @@ function replaceTeisei(s){
 }
 
 module.exports = function(line){
-  interpreter(line);
+  var interpreter_result = interpreter(line);
+  return JSON.parse(result);
 }
 
 // ----------
