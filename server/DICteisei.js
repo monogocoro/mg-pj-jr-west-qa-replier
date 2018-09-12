@@ -1,13 +1,15 @@
 module.exports = {
     make: function (){
 	return [
-	    //部分を含む時は、部分を先にもってくること。
-	    {org: "$.", mod: "。"},
+    	    {org: "嵯峨嵐山", mod: "SAGAARASHIYAMA"},
+    	    {org: "はるか", mod: "HARUKA "}, //-> HORUKA
     	    {org: "UGA", mod: "UJI "},
-	    
-        {org: "新幹線", mod: "SHINKANSEN"},
+	    {org: "特急", mod: "TOKKYU "},
+	    {org: "券売機", mod: "KENBAIKI "},
 	    {org: "乗り場", mod: "NORIBA "},
+    	    {org: "のりば", mod: "NORIBA "},
 	    {org: "8乗口", mod: "HACHIJOGUCHI "},
+    	    {org: "8乗ぐち", mod: "HACHIJOGUCHI "},
 	    {org: "烏丸口", mod: "KARASUAMAGUCHI "},
 	    {org: "八条ぐち", mod: "HACHIJOGUCHI "},
 	    {org: "みどりの窓口", mod: "MIDORINOMADOGUCHI "},
@@ -16,6 +18,7 @@ module.exports = {
 
 	    {org: "ぷらっとこだま", mod: "PRATTOKODAMA "},
 	    {org: "回数券", mod: "KAISUKEN "},
+	    {org: "生産", mod: "SEISAN "},
 	    {org: "定期", mod: "TEIKI "},
 	    {org: "昼得", mod: "HIRUTOKU "},
 	    {org: "生産", mod: "SEISAN "},
@@ -60,9 +63,9 @@ module.exports = {
 	    {org: "四条烏丸", mod: "SHIJOKARASUMA "},
 	    {org: "五条", mod: "GOJO "},
 	    {org: "新大阪", mod: "SHINOSAKA "},
-	    {org: "ウジエ", mod: "UJI へ"},
+	    {org: "ウジエ", mod: "UJI へ "},
 	    {org: "太秦", mod: "UZUMASA "},
-	    {org: "嵯峨嵐山", mod: "SAGAARASHIYAMA "},
+
 	    {org: "篠山口", mod: "SASAYAMAGUCHI "},
 	    {org: "市の山口", mod: "SASAYAMAGUCHI "},
 	    {org: "橋立", mod: "HASHIDATE "},
