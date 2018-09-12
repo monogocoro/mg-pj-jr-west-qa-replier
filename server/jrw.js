@@ -18,7 +18,7 @@ var _ = require('lodash');
 var debug = false;
 var debugC = false;
 var edebug = true;
-var batch = true;
+var batch = false;
 
 // ---------------------------
 //  Text to Enju output (JSON)
@@ -611,6 +611,7 @@ function sunit2post (tokenList, ggram){ // 主として数詞処理
 
 function number(letter){
     switch(letter){
+	//当然のことながらこれは増やす！！
     case "one": return "1";
     case "two": return "2";
     case "three": return "3";
@@ -677,16 +678,14 @@ function concatenate(a){
     return noun;
 }
 
-var lodash = require('lodash');
-
 function getkey(o){
-    return (lodash.keys(o))[0];
-    // return (Object.keys(o))[0];
+    return (_.keys(o)[0]);
+    //return (Object.keys(o))[0];
 }
 
 function getvalue(o){
-    return (lodash.values(o))[0];
-    // return (Object.values(o))[0];
+    return (_.values(o)[0]);
+    //return (Object.values(o))[0];
 }
 
 function getjword(s){
@@ -824,6 +823,34 @@ function isATM(obj){
     return r;
 }
 
+//
+// --- 「会話」における意図抽出の難しさ
+//    (a) 形式的で長文の方が細かい情報をとりやすい
+//    (b) 一方、抽出ルールが細かすぎると、表現乱れに対応できなくなる
+//    (c) 結局、このバランスをうまく吸収する、たぶんオンロジー辞書なのか。
+//    (d) しかし、本システムを発展させるには(a)部分は簡略化したくない。
+//
+
+var default_station = '京都';
+var defaut_from_station =  '京都'; //from:
+
+function change_from_station(newfrom){
+    // 標準の出発駅はdefault_from_station
+    // from:タグとnewfromと異なるときは、from:タグの値をnewfromで置き換える
+
+    //var test = {"queryTDB":{"from":"京都","to":"東京","total_time":"what"}};
+    //console.log(change_from_station('大阪'));
+    // => {"queryTDB":{"from":"大阪","to":"東京","total_time":"what"}};
+
+    var a = JSON.stringify(test, function(key, value){
+	if (key == 'from' && value != newfrom){
+	    return newfrom;
+	}
+	return value;
+    });
+    return a;
+}
+
 var scoderules = [
     // scodeの構造を前提にルールruleを作成
     // 文字列部分をそのまま一致した場合成功
@@ -831,97 +858,123 @@ var scoderules = [
     // JSONパターンに含まれる$で始まる名前はargsの順番に適用される。
 
     {rule: ["number", "noriba", isTDBN],
-     ptn: {queryTDB: {place: '京都', train: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {place: default_station, train: '$1', bansen: 'what'}}},
 
     {rule: [isNumber, "noriba"],
-     ptn: {querySDB: {place: '京都', bansen: '$1'}}},
+     ptn: {querySDB: {place: default_station, bansen: '$1'}}},
 
     {rule: ["noriba", isNumber],
-     ptn: {querySDB: {place: '京都', bansen: '$1'}}},
+     ptn: {querySDB: {place: default_station, bansen: '$1'}}},
 
     {rule: ["noriba", "of", isSDBN],
-     ptn: {querySDB: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: default_station, location: '$1'}}},
 
     {rule: [isSDBN, "noriba"],
-     ptn: {querySDB: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: default_station, location: '$1'}}},
 
     {rule: ["to", isTDBN, "noriba"],
-     ptn: {queryTDB: {from: '京都', to: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {from: default_station, to: '$1', bansen: 'what'}}},
 
     {rule: ["チケット売り場", isSDBN],
-     ptn: {querySDB: {location: '京都', place:'チケット売り場', kind: '$1'}}},
-
-    {rule: [isLine, "noriba"],
-     ptn: {queryTDB: {place: '京都', line: '$1', bansen: 'what'}}},
-
-    {rule: [isSTrain, "noriba"],
-     ptn: {queryTDB: {place: '京都', train: '$1', bansen: 'what'}}},
+     ptn: {querySDB: {location: default_station, place:'チケット売り場', kind: '$1'}}},
 
     {rule: ["noriba", "of", isLine],
-     ptn: {queryTDB: {place: '京都', line: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {place: default_station, line: '$1', bansen: 'what'}}},
 
     {rule: ["noriba", "of", isSTrain],
-     ptn: {queryTDB: {place: '京都', train: '$1', bansen: 'what'}}},
+     ptn: {queryTDB: {place: default_station, train: '$1', bansen: 'what'}}},
 
     {rule: ["始発", "to", isTDBN],
-     ptn: {queryTDB: {from: '京都', to: '$1', period: '始発'}}},
+     ptn: {queryTDB: {from: default_station, to: '$1', period: '始発'}}},
 
-    {rule: ["how", "long", isTDBN],
-     ptn: {queryTDB: {from: '京都', to: '$1', total_time: 'what'}}},
+    // from ... to ...
+    {rule: ["how", "long", "from", isTDBN, "to", isTDBN],
+     ptn: {queryTDB: {from: '$1', to: '$2', total_time: 'what'}}},
 
-    {rule: ["how", "long", isSDBN], //関空[SDB]のケース
-     ptn: {queryTDB: {from: '京都', to: '$1', total_time: 'what'}}},
+    {rule: ["how", "long", "from", isTDBN, "to", isSDBN], //関空[SDB]のケース
+     ptn: {queryTDB: {from: '$1', to: '$2', total_time: 'what'}}},
+
+    {rule: ["time", "from", isTDBN, "to", isTDBN],
+     ptn: {queryTDB: {from: '$1', to: '$2', total_time: 'what'}}},
+
+    {rule: ["how", "much", "time", "form", isTDBN, "to", isTDBN],
+     ptn: {queryTDB: {from: '$1', to: '$2', total_time: 'what'}}},
+
+    {rule: ["take", "hour", "from", isTDBN, "to", isTDBN],
+     ptn: {queryTDB: {from: '$1', to: '$2', total_time: 'what'}}},
+
+    {rule: ["fare", "from", isTDBN, "to", isTDBN],
+     ptn: {queryTDB: {from: '$1', to: '$2', fare: 'what'}}},
+
+    {rule: ["charge", "from", isTDBN, "to", isTDBN],
+     ptn: {queryTDB: {from: '$1', to: '$2', fare: 'what'}}},
+
+    // to ...
+    {rule: ["how", "long", "to", isTDBN],
+     ptn: {queryTDB: {from: default_station, to: '$1', total_time: 'what'}}},
+
+    {rule: ["how", "long", "to", isSDBN], //関空[SDB]のケース
+     ptn: {queryTDB: {from: default_station, to: '$1', total_time: 'what'}}},
 
     {rule: ["time", "to", isTDBN],
-     ptn: {queryTDB: {from: '京都', to: '$1', total_time: 'what'}}},
+     ptn: {queryTDB: {from: default_station, to: '$1', total_time: 'what'}}},
 
-    {rule: ["how", "much", "time", isTDBN],
-     ptn: {queryTDB: {from: '京都', to: '$1', total_time: 'what'}}},
+    {rule: ["how", "much", "time", "to", isTDBN],
+     ptn: {queryTDB: {from: default_station, to: '$1', total_time: 'what'}}},
+
+    {rule: ["take", "hour", "to", isTDBN],
+     ptn: {queryTDB: {from: default_station, to: '$1', total_time: 'what'}}},
 
     {rule: ["fare", "to", isTDBN],
-     ptn: {queryTDB: {from: '京都', to: '$1', fare: 'what'}}},
+     ptn: {queryTDB: {from: default_station, to: '$1', fare: 'what'}}},
 
     {rule: ["charge", "to", isTDBN],
-     ptn: {queryTDB: {from: '京都', to: '$1', fare: 'what'}}},
+     ptn: {queryTDB: {from: default_station, to: '$1', fare: 'what'}}},
 
     {rule: ["バス", "to", isSDBN],
-     ptn: {querySDB: {place: '京都', location: 'バス', to: '$1'}}},
+     ptn: {querySDB: {place: default_station, location: 'バス', to: '$1'}}},
 
     {rule: ["バス", "to", isTDBN],
-     ptn: {querySDB: {from: '京都', to: '$1', route: 'バス'}}},
+     ptn: {querySDB: {from: default_station, to: '$1', route: 'バス'}}},
 
     {rule: [isExchange, "money"],
-     ptn: {querySDB: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: default_station, location: '$1'}}},
 
     {rule: [isATM, "money"],
-     ptn: {querySDB: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: default_station, location: '$1'}}},
 
     {rule: [isSell, "beer"], // 後で修正
-     ptn: {querySDB: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: default_station, location: '$1'}}},
 
     {rule: [isSell, "cigarette"], //後で修正
-     ptn: {querySDB: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: default_station, location: '$1'}}},
 
     {rule: [isSell, "coffee"], //後で修正
-     ptn: {querySDB: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: default_station, location: '$1'}}},
 
     {rule: ["buy", "souvenir"], //後で修正
-     ptn: {querySDB: {place: '京都', location: 'お土産屋'}}},
+     ptn: {querySDB: {place: default_station, location: 'お土産屋'}}},
 
     {rule: ["leave", "something"], //後で修正
-     ptn: {querySDB: {place: '京都', location: '京都忘れ物センター'}}},
+     ptn: {querySDB: {place: default_station, location: default_station+'忘れ物センター'}}},
 
     {rule: ["saten"], //後で修正
-     ptn: {querySDB: {place: '京都', location: '喫茶店'}}},
+     ptn: {querySDB: {place: default_station, location: '喫茶店'}}},
+
+    {rule: [isLine, "noriba"],
+     ptn: {queryTDB: {place: default_station, line: '$1', bansen: 'what'}}},
+
+    {rule: [isSTrain, "noriba"],
+     ptn: {queryTDB: {place: default_station, train: '$1', bansen: 'what'}}},
 
     {rule: [isSDBN],
-     ptn: {querySDB: {place: '京都', location: '$1'}}},
+     ptn: {querySDB: {place: default_station, location: '$1'}}},
 
     {rule: [isTDBN],
-     ptn: {queryTDB: {from: '京都', to: '$1'}}},
+     ptn: {queryTDB: {from: default_station, to: '$1'}}},
 
     {rule: ["go", "to", isN],
-     ptn: {queryTDB: {from: '京都', to: '$1'}}},
+     ptn: {queryTDB: {from: default_station, to: '$1'}}},
 ];
 
 
@@ -929,12 +982,15 @@ function generateJcode(){
     console.log("--jcode---");
     // interprete scode then generate jcode
 
-    var jcode = {queryJDB: "fail"}
+    var jcode = JSON.stringify({queryJDB: "fail"});
     var ri = 0;
     scode = flatten(scode);
     var rule, pattern;
     while (ri < scoderules.length){
-	rule = deepCopy(scoderules[ri].rule); // ruleapplyで破壊されるのを防ぐ
+	// ruleapplyで破壊されるのを防ぐ。
+	// 原因不明。要デバッグ！
+	// 現状はルールすべてをコピーするので、ルール数に応じたオーバヘッドが生じる。
+	rule = deepCopy(scoderules[ri].rule);
 	if (ruleapply(scode, rule)){
 	    pattern = JSON.parse(JSON.stringify(scoderules[ri].ptn));
 	    jcode = JSON.stringify(pattern, replacer);;
@@ -952,7 +1008,6 @@ function generateJcode(){
 
 function ruleapply(scode, rule){
     var i = 0;
-
     while (i < scode.length){
 	//console.log("scode:", scode[i], " rule:", rule);
 	var sflag = false; var fflag = false;
@@ -966,11 +1021,14 @@ function ruleapply(scode, rule){
 	    if (rule[0](scode[i])){
 		// 動詞[V]+名詞[N]型で
 		// 名詞との組み合わせで、動詞が場所[N]を決める場合
+		// これもirregular処理。改善したい。
 		if (vnvalue != false && getkey(scode[i]) != "N"){
 		    args.push(vnvalue);
 		    vnvalue = false;
+		    //console.log("i:", i, " args0", args);
 		} else {
 		    args.push(getvalue(scode[i]));
+		    //console.log("i:", i, " args1:", args);
 		}
 		rule.shift();
 		i++; fflag = true;
@@ -978,12 +1036,23 @@ function ruleapply(scode, rule){
 	}
 	if(!(sflag || fflag)) i++;
     }
-    if (JSON.stringify(rule) == "[]") return true;
-    else return false;
+    //console.log("i:", i, " args2:", args);
+    if (JSON.stringify(rule) == "[]") {
+	args = args.reverse();
+	return true;
+    }
+    else {
+	args = []; //失敗したのでargsをクリアする
+	return false;
+    }
 }
 
 function replacer(key, value) {
+    // ルール内の変数をargs（ルール内述語に対応したscodeをスタック）に保存
+    // ついで、この機能を使い、ルール内変数$*をargsの中身で置き換える。
     switch(value){
+	//今の状態はルール上の変数を最大6までとしている。
+	//もちろんこれを増やすことは可能。
     case '$1': return args.pop();
     case '$2': return args.pop();
     case '$3': return args.pop();
@@ -1172,7 +1241,7 @@ function replaceTeisei(s){
 }
 
 module.exports = function(line){
-  var interpreter_result = interpreter(line);
+  var interpreter_result = interpreter(replaceTeisei(line));
   return JSON.parse(interpreter_result);
 }
 

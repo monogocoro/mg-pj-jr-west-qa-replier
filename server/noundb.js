@@ -20,7 +20,7 @@ const noundb = {
 	}
     }
 }
-    
+
 function createDB(db, schema_name, list){
     db.write(() => {
 	list.forEach((val, key) => {
@@ -30,7 +30,7 @@ function createDB(db, schema_name, list){
 	    );
         });
     });
-}    
+}
 
 const db = new Realm({path: "./db/noun.db", schema: [noundb]});
 
@@ -42,6 +42,7 @@ const db = new Realm({path: "./db/noun.db", schema: [noundb]});
 // $マークはrealm CONTAINS利用において部分一致を防ぐため
 // $マークがない場合、CONTAINSは""にも部分一致してしまう！
 const nounlist = [
+  {id: 300, jword: "金沢", db: "TDB", aliases: "$kanazawa$"},
     {id: 1, jword: "八条口", db: "SDB", aliases: "$hachijō_mouth$ $hachijoguchi$"},
     {id: 2, jword: "金閣寺", db: "TDB", aliases: "$kinkakuji$ $kinkakuji_temple$"},
     {id: 3, jword: "タクシー", db: "SDB", aliases: "$taxi$"},
@@ -191,7 +192,7 @@ const nounlist = [
     {id: 155, jword: "最終時刻", db: "RDB", aliases: "$last_train_time$"},
     {id: 156, jword: "最終", db: "RDB", aliases: "$last_train$"},
     {id: 157, jword: "始発", db: "RDB", aliases: "$first_train$"},
-    {id: 158, jword: "各停", db: "RDB", aliases: "$each_stop$ $local_train$"},  
+    {id: 158, jword: "各停", db: "RDB", aliases: "$each_stop$ $local_train$"},
     //{id: 159, jword: "桂川の定期", db: "RDB", aliases: "$katsuragawa_teiki$"},
     {id: 160, jword: "新快速", db: "TDB", aliases: "$shinkaisoku$"},
     {id: 161, jword: "都路快速", db: "TDB", aliases: "$miyakojikaisoku$"},
@@ -258,5 +259,3 @@ createDB(db, "noundb", nounlist);
 
 db.close();
 process.exit(0);
-
-
