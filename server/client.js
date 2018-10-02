@@ -78,7 +78,7 @@ function connectServer() {
         //   // })[0];
         // }
         var route = new Route();
-        reply.param = {query: route.interpret(reply.input), input: text};
+        reply.param = {query: JSON.parse(route.interpret(reply.input)), input: text};
         // reply.param = route.interpret(reply.input);
       }
       result = JSON.parse(JSON.stringify(reply));
