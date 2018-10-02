@@ -12,7 +12,7 @@ var Reply = app.models.reply;
 var Suggestion = app.models.suggestion;
 var Route = app.models.route;
 var reconnectInterval = 1000 * 3;
-
+/*
 var suggestions = [];
 suggestions.push(new Suggestion({key: '金閣寺', value: '金閣寺 知りたい'}));
 suggestions.push(new Suggestion({key: '大阪駅', value: '大阪駅 行き方'}));
@@ -39,6 +39,7 @@ reply.isValid(function(valid) {
 
 var json = '{"param":{"errors":{"input":["is not included in the list"]}},"input":"aa","api":"replyData"}'
 var result = JSON.parse(json);
+*/
 
 var ws = null;
 function connectServer() {
@@ -53,6 +54,7 @@ function connectServer() {
     console.log(json);
     var jsonObj = JSON.parse(json);
     var text = jsonObj['param']['text'];
+    var uuid = jsonObj['param']['id'];
     var reply = new Reply({input: text, api: 'replyData', param: {}});
     // var reply = new Reply({api: 'replyData', param: {} });
 
@@ -78,7 +80,7 @@ function connectServer() {
         //   // })[0];
         // }
         var route = new Route();
-        reply.param = {query: JSON.parse(route.interpret(reply.input)), input: text};
+        reply.param = {id: uuid, query: JSON.parse(route.interpret(reply.input)), input: text};
         // reply.param = route.interpret(reply.input);
       }
       result = JSON.parse(JSON.stringify(reply));
