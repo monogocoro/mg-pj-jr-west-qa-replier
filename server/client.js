@@ -57,36 +57,44 @@ function connectServer() {
     var uuid = jsonObj['param']['id'];
     var reply = new Reply({input: text, api: 'replyData', param: {}});
     // var reply = new Reply({api: 'replyData', param: {} });
-
-    reply.isValid(function(valid) {
+    try {
+      reply.isValid(function(valid) {
+        var result;
+  
+        if (!valid) {
+          // result = JSON.parse(JSON.stringify(reply));
+          console.log(reply.errors);
+          // var json = '{"errors":{"input":["is not included in the list"]}}'
+          // reply.param.errors = JSON.parse(json);
+          reply.param.errors = reply.errors;
+        } else {
+          // if (reply.willSuggest()) {
+          //   reply.param.suggestions = suggestions.filter(function(value) {
+          //     return value.key == reply.input;
+          //   });
+          // } else {
+          //   var route = new Route();
+          //   reply.param = route.interpret(reply.input);
+          //   // reply.content = routes.filter(function(value) {
+          //   //   return reply.input.indexOf(value.key) != -1;
+          //   // })[0];
+          // }
+          var route = new Route();
+          reply.param = {id: uuid, query: JSON.parse(route.interpret(reply.input)), input: text};
+          // reply.param = route.interpret(reply.input);
+        }
+        result = JSON.parse(JSON.stringify(reply));
+        console.log('result:' + JSON.stringify(result));
+        ws.send(JSON.stringify(result));
+      });
+    } catch (error) {
       var result;
-
-      if (!valid) {
-        // result = JSON.parse(JSON.stringify(reply));
-        console.log(reply.errors);
-        // var json = '{"errors":{"input":["is not included in the list"]}}'
-        // reply.param.errors = JSON.parse(json);
-        reply.param.errors = reply.errors;
-      } else {
-        // if (reply.willSuggest()) {
-        //   reply.param.suggestions = suggestions.filter(function(value) {
-        //     return value.key == reply.input;
-        //   });
-        // } else {
-        //   var route = new Route();
-        //   reply.param = route.interpret(reply.input);
-        //   // reply.content = routes.filter(function(value) {
-        //   //   return reply.input.indexOf(value.key) != -1;
-        //   // })[0];
-        // }
-        var route = new Route();
-        reply.param = {id: uuid, query: JSON.parse(route.interpret(reply.input)), input: text};
-        // reply.param = route.interpret(reply.input);
-      }
+      reply.param.errors = error;
       result = JSON.parse(JSON.stringify(reply));
+      console.log('result.error:' + JSON.stringify(reply.param.errors));
       console.log('result:' + JSON.stringify(result));
       ws.send(JSON.stringify(result));
-    });
+    }
   });
   ws.on('error', function() {
     console.log('ws error');
