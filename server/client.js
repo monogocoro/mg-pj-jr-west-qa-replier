@@ -38,7 +38,7 @@ function connectServer() {
           reply.param.errors = reply.errors;
         } else {
           var route = new Route();
-          reply.param = {id: uuid, query: JSON.parse(route.interpret(reply.input)), input: text};
+          reply.param = {id: uuid, query: JSON.parse(route.interpret('', '', reply.input)), input: text};
         }
         result = JSON.parse(JSON.stringify(reply));
         console.log('result:' + JSON.stringify(result));
@@ -46,7 +46,7 @@ function connectServer() {
       });
     } catch (error) {
       var result;
-      reply.param.errors = 'something wrong';
+      reply.param.errors = error.message;
       result = JSON.parse(JSON.stringify(reply));
       console.log('result:' + JSON.stringify(result));
       ws.send(JSON.stringify(result));
