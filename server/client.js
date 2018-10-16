@@ -16,7 +16,7 @@ var reconnectInterval = 1000 * 3;
 var ws = null;
 function connectServer() {
   ws = null;
-  //ws = new WebSocket('ws://202.229.59.135:9000');
+  // ws = new WebSocket('ws://202.229.59.135:9000');
   ws = new WebSocket('ws://127.0.0.1:9000');
   ws.on('open', function open() {
     console.log('ws opened!');
@@ -27,18 +27,23 @@ function connectServer() {
     var jsonObj = JSON.parse(json);
     var text = jsonObj['param']['text'];
     var uuid = jsonObj['param']['id'];
+    var lang = 'japanese';
+    if (jsonObj['param']['lang'] == 'en') {
+      lang = 'english';
+    }
+    var mode = jsonObj['param']['mode'];
     var reply = new Reply({input: text, api: 'replyData', param: {}});
     // var reply = new Reply({api: 'replyData', param: {} });
     try {
       reply.isValid(function(valid) {
         var result;
-  
+
         if (!valid) {
           console.log(reply.errors);
           reply.param.errors = reply.errors;
         } else {
           var route = new Route();
-          reply.param = {id: uuid, query: JSON.parse(route.interpret('', '', reply.input)), input: text};
+          reply.param = {id: uuid, query: JSON.parse(route.interpret(lang, mode, reply.input)), input: text};
         }
         result = JSON.parse(JSON.stringify(reply));
         console.log('result:' + JSON.stringify(result));
