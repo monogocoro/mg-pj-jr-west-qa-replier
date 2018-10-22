@@ -20,6 +20,7 @@ function analyseText(lang, mode, text) {
   return new Promise(function(resolve, reject) {
     return resolve(interpreter(lang, mode, text));
     // return resolve('{"queryUKN": {"words":["みどり","金閣寺"]}}');
+    // return resolve('{"queryUKN": {"dbtype": "SDB", "istype":"述語関数", "word": "不明単語"}}');
   });
 }
 function connectServer() {
@@ -56,6 +57,9 @@ function connectServer() {
     .then((query) => {
       var tmpJson = JSON.parse(query);
       if (tmpJson['queryUKN'] != undefined && tmpJson['queryUKN'] != null) {
+        if (tmpJson['queryUKN']['words'] == undefined || tmpJson['queryUKN']['words'] == null) {
+          throw 'UKN no words';
+        }
         const dbUtil = new DbUtil('mongodb://localhost/jrwdb');
         let orgreg = '.*(?!(queryUKN|queryJDB)).*(\'|\")input(\'|\"):(\'|\").*(';
         tmpJson['queryUKN']['words'].forEach(word => {
