@@ -37,10 +37,8 @@ function connectServer() {
     var jsonObj = JSON.parse(json);
     var text = jsonObj['param']['text'];
     var uuid = jsonObj['param']['id'];
-    var lang = 'japanese';
-    if (jsonObj['param']['lang'] == 'en') {
-      lang = 'english';
-    }
+    var lang = jsonObj['param']['lang'];
+
     var mode = jsonObj['param']['mode'];
     var reply = new Reply({input: text, api: 'replyData', param: {}});
     new Promise(function(resolve, reject) {
