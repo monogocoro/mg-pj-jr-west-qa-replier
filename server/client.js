@@ -110,7 +110,7 @@ function connectServer() {
       }
     })
     .catch((error) => {
-      reply.param.errors = error;
+      reply.param = {'id': uuid, 'errors': error, 'input': text};
       var result = JSON.parse(JSON.stringify(reply));
       console.log('result:' + JSON.stringify(result));
       ws.send(JSON.stringify(result));
