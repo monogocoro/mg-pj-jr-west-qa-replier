@@ -2,7 +2,7 @@
 var loopback = require('loopback');
 var boot = require('loopback-boot');
 var app = module.exports = loopback();
-var interpreter = require('../JRW-NLU/jrw');
+var interpreter = require('../JRW-NLU/core');
 const WebSocket = require('ws');
 var DbUtil = require('./dbUtil');
 

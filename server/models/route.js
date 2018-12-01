@@ -1,7 +1,7 @@
 'use strict';
 // import {interpreter} from '../jrw.js';
 // var interpreter = require('../jrw.js');
-var interpreter = require('../../JRW-NLU/jrw');
+// var interpreter = require('../../JRW-NLU/jrw');
 
 module.exports = function(Route) {
   /*
