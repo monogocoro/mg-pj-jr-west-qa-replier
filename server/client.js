@@ -2,7 +2,7 @@
 var loopback = require('loopback');
 var boot = require('loopback-boot');
 var app = module.exports = loopback();
-var interpreter = require('../JRW-NLU/core');
+var interpreter = require('../test-jrw-nlu/core');
 const WebSocket = require('ws');
 var DbUtil = require('./dbUtil');
 
@@ -18,6 +18,7 @@ var reconnectInterval = 1000 * 3;
 var ws = null;
 function analyseText(lang, mode, text) {
   return new Promise(function(resolve, reject) {
+    lang = 'ja' //日本語を強制している
     return resolve(interpreter(lang, mode, text));
     // return resolve('{"queryUKN": {"words":["みどり","金閣寺"]}}');
     // return resolve('{"queryUKN": {"dbtype": "SDB", "istype":"述語関数", "word": "不明単語"}}');
@@ -38,6 +39,7 @@ function connectServer() {
     var text = jsonObj['param']['text'];
     var uuid = jsonObj['param']['id'];
     var lang = jsonObj['param']['lang'];
+    var log_session_no = jsonObj['param']['log_session_no'];
 
     var mode = jsonObj['param']['mode'];
     var reply = new Reply({input: text, api: 'replyData', param: {}});
@@ -51,7 +53,7 @@ function connectServer() {
       });
     })
     .then(() => {
-      return analyseText(lang, mode, reply.input);
+      return analyseText(lang, mode, reply.input, log_session_no);
     })
     .then((query) => {
       var tmpJson = JSON.parse(query);

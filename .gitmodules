@@ -1,3 +1,6 @@
 [submodule "JRW-NLU"]
 	path = JRW-NLU
 	url = http://202.229.59.135:8080/gitbucket/git/JR/JRW-NLU.git
+[submodule "test-jrw-nlu"]
+	path = test-jrw-nlu
+	url = http://202.229.59.135:8080/gitbucket/git/tanaka/test-jrw-nlu.git
