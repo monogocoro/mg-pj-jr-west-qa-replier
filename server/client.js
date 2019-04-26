@@ -57,7 +57,7 @@ function connectServer() {
     })
     .then((query) => {
       var tmpJson = query;
-      if (tmpJson['queryUKN'] != undefined && tmpJson['queryUKN'] != null) {
+      if (tmpJson !== undefined && tmpJson['queryUKN'] != undefined && tmpJson['queryUKN'] != null) {
         if (tmpJson['queryUKN']['words'] == undefined || tmpJson['queryUKN']['words'] == null) {
           throw 'UKN no words';
         }
