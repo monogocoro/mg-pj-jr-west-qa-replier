@@ -56,7 +56,7 @@ function connectServer() {
       return analyseText(lang, mode, reply.input, log_session_no);
     })
     .then((query) => {
-      var tmpJson = JSON.parse(query);
+      var tmpJson = query;
       if (tmpJson['queryUKN'] != undefined && tmpJson['queryUKN'] != null) {
         if (tmpJson['queryUKN']['words'] == undefined || tmpJson['queryUKN']['words'] == null) {
           throw 'UKN no words';
