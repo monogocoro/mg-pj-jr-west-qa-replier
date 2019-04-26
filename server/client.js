@@ -19,36 +19,8 @@ var ws = null;
 function analyseText(lang, mode, text) {
   return new Promise(function(resolve, reject) {
     lang = 'ja' //日本語を強制している
-    let result = interpreter(lang, mode, text)
-    // if ( result.match(/{"replyJDB":{"greeting":"I'm afraid I haven't information .#申し訳ありません、情報がありません。"}}/)) {
-    //   console.log('jdb');
-    let table = {
-      '授乳室はどこか':'{"queryGDB":"g.V().hasLabel(\'授乳室\').in(\'instanceOf\')"}',
-      '多目的トイレはどこか':'{"queryGDB":"g.V().hasLabel(\'多目的トイレ\').in(\'instanceOf\')"}',
-      'オムツを替えられる場所はあるか':'{"queryGDB":"g.V().hasLabel(\'location\').where(out(\'change\').hasLabel(\'オムツ\'))"}',
-      '喫煙場所はどこか':'{"queryGDB":"g.V().hasLabel(\'喫煙場所\').in(\'instanceOf\')"}',
-      'タバコが吸える場所はどこか':'{"queryGDB":"g.V().hasLabel(\'location\').where(out(\'smoke\').hasLabel(\'人\'))"}',
-      '喫茶店はどこか':'{"queryGDB":"g.V().hasLabel(\'喫茶店\').in(\'instanceOf\')"}'
-    }
-    let query = null
-    if (query = table[text]) {
-      return resolve(query);
-    }else {
-      let matched = text.match(/(.+)はどこ/)
-      if (matched) {
-        console.log('matched');
-        // return resolve('{"querySDB":{"station":"kyoto#京都","place":{"name":"midorinomadoguchi#'+matched[1]+'"}}}')
-        return resolve('{"queryGDB":"g.V().hasLabel(\''+matched[1]+'\').in(\'instanceOf\')"}');
-      } else {
-        return resolve(result);
-      }
-    }
-
-    // } else {
-    //   return resolve(result);
-    // }
-    // return resolve(interpreter(lang, mode, text));
-    // return resolve('{"queryGDB": ".V().has(\'name\', \'お手洗い\').in(\'instanceOf\')"}');
+    return resolve(interpreter(lang, mode, text));
+    // return resolve('{"queryUKN": {"words":["みどり","金閣寺"]}}');
     // return resolve('{"queryUKN": {"dbtype": "SDB", "istype":"述語関数", "word": "不明単語"}}');
     // return resolve('{"querySDB": {"station": "京都", "place": {"name": "バス乗り場"}}}');
   });
@@ -142,7 +114,6 @@ function connectServer() {
     .catch((error) => {
       reply.param = {'id': uuid, 'errors': error, 'input': text};
       var result = JSON.parse(JSON.stringify(reply));
-      console.log('error:' + JSON.stringify(error));
       console.log('result:' + JSON.stringify(result));
       ws.send(JSON.stringify(result));
     });
