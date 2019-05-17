@@ -16,10 +16,11 @@ var Route = app.models.route;
 var reconnectInterval = 1000 * 3;
 
 var ws = null;
-function analyseText(lang, mode, text) {
+function analyseText(lang, mode, dialogMode, text) {
   return new Promise(function(resolve, reject) {
     lang = 'ja' //日本語を強制している
-    return resolve(interpreter(lang, mode, text));
+    console.log(lang, mode, dialogMode, text);
+    return resolve(interpreter(lang, mode, dialogMode, text));
     // return resolve('{"queryUKN": {"words":["みどり","金閣寺"]}}');
     // return resolve('{"queryUKN": {"dbtype": "SDB", "istype":"述語関数", "word": "不明単語"}}');
     // return resolve('{"querySDB": {"station": "京都", "place": {"name": "バス乗り場"}}}');
@@ -42,6 +43,8 @@ function connectServer() {
     var log_session_no = jsonObj['param']['log_session_no'];
 
     var mode = jsonObj['param']['mode'];
+    var dialogMode = jsonObj['param']['dialog_mode'];
+
     var reply = new Reply({input: text, api: 'replyData', param: {}});
     new Promise(function(resolve, reject) {
       reply.isValid(function(valid) {
@@ -53,7 +56,7 @@ function connectServer() {
       });
     })
     .then(() => {
-      return analyseText(lang, mode, reply.input, log_session_no);
+      return analyseText(lang, mode, dialogMode, reply.input, log_session_no);
     })
     .then((query) => {
       var tmpJson = query;
