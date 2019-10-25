@@ -43,7 +43,8 @@ function connectServer() {
     var log_session_no = jsonObj['param']['log_session_no'];
 
     var mode = jsonObj['param']['mode'];
-    var dialogMode = jsonObj['param']['dialog_mode'];
+    // var dialogMode = jsonObj['param']['dialog_mode'];
+    var dialogMode = 'none';
 
     var reply = new Reply({input: text, api: 'replyData', param: {}});
     new Promise(function(resolve, reject) {
@@ -58,8 +59,8 @@ function connectServer() {
     .then(() => {
       return analyseText(lang, mode, dialogMode, reply.input, log_session_no);
     })
-    .then((query) => {
-      var tmpJson = query;
+    .then((analyzed) => {
+      var tmpJson = analyzed['query'];
       if (tmpJson !== undefined && tmpJson['queryUKN'] != undefined && tmpJson['queryUKN'] != null) {
         if (tmpJson['queryUKN']['words'] == undefined || tmpJson['queryUKN']['words'] == null) {
           throw 'UKN no words';
@@ -108,14 +109,19 @@ function connectServer() {
           }
         });
       } else {
-        reply.param = {'id': uuid, 'query': tmpJson, 'input': text};
+        var input = analyzed['input'];
+        var translated = '';
+        if (input['mirai'] && Array.isArray(input['mirai']) && input['mirai'].length > 0) {
+          translated = input['mirai'][0];
+        }
+        reply.param = {'id': uuid, 'query': tmpJson, 'input': text, 'translated': translated};
         var result = JSON.parse(JSON.stringify(reply));
         console.log('result:' + JSON.stringify(result));
         ws.send(JSON.stringify(result));
       }
     })
     .catch((error) => {
-      reply.param = {'id': uuid, 'errors': error, 'input': text};
+      reply.param = {'id': uuid, 'errors': error, 'input': text, 'translated': ''};
       var result = JSON.parse(JSON.stringify(reply));
       console.log('result:' + JSON.stringify(result));
       ws.send(JSON.stringify(result));
