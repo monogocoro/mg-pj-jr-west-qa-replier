@@ -22,7 +22,7 @@
     "realm": "^2.15.3",
     "serve-favicon": "^2.0.1",
     "strong-error-handler": "^3.0.0",
-    "ws": "^5.2.2"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "eslint": "^3.17.1",
